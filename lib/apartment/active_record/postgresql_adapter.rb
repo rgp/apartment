@@ -8,6 +8,10 @@
 module Apartment::PostgreSqlAdapterPatch
   def default_sequence_name(table, _column)
     res = super
+
+    # for JDBC driver, if rescued in super_method, trim leading and trailing quotes
+    res.delete!('"') if defined?(JRUBY_VERSION)
+
     schema_prefix = "#{Apartment::Tenant.current}."
     default_tenant_prefix = "#{Apartment::Tenant.default_tenant}."
 
